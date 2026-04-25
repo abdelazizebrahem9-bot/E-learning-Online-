@@ -3,193 +3,177 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Learning Registration | التسجيل في الكورسات</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <title>Free E-Learning Courses — Register Now | سجّل الآن</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --matrix-green: #00ff41;
-      --matrix-dim: #00b32c;
-      --matrix-dark: #003b00;
-      --bg: #000000;
-      --card-bg: rgba(0, 20, 0, 0.85);
-      --border: rgba(0, 255, 65, 0.25);
-      --border-bright: rgba(0, 255, 65, 0.6);
-      --text: #ccffcc;
-      --muted: #4a9e4a;
-      --input-bg: rgba(0, 40, 0, 0.8);
+      --green:    #00c896;
+      --green2:   #00a87e;
+      --dark:     #0d1117;
+      --card:     #161b22;
+      --border:   #2a3140;
+      --text:     #e6edf3;
+      --muted:    #7d8fa3;
+      --input-bg: #1c2333;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Cairo', sans-serif;
-      background: var(--bg);
+      background: var(--dark);
       color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* ===== MATRIX RAIN CANVAS ===== */
-    #matrixCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-      opacity: 0.18;
-    }
-
-    /* ===== SCANLINES OVERLAY ===== */
-    body::after {
+    body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.08) 2px,
-        rgba(0,0,0,0.08) 4px
-      );
+      background-image:
+        linear-gradient(rgba(0,200,150,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,150,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
       pointer-events: none;
-      z-index: 1;
     }
 
-    .page {
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(0,200,150,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 560px;
       position: relative;
-      z-index: 2;
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 40px 20px 60px;
+      z-index: 1;
+      animation: fadeUp 0.5s ease both;
     }
 
-    /* ===== HEADER ===== */
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .glitch-title {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 13px;
-      color: var(--matrix-green);
-      letter-spacing: 4px;
-      margin-bottom: 16px;
-      animation: blink 2s step-end infinite;
+    /* ===== BADGE ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,200,150,0.1);
+      border: 1px solid rgba(0,200,150,0.3);
+      color: var(--green);
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
     }
 
-    @keyframes blink {
-      50% { opacity: 0.4; }
+    .badge-dot {
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
     }
 
-    .main-title {
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    h1 {
       font-family: 'Cairo', sans-serif;
-      font-size: 38px;
+      font-size: 36px;
       font-weight: 900;
-      color: var(--matrix-green);
-      text-shadow:
-        0 0 10px rgba(0,255,65,0.8),
-        0 0 30px rgba(0,255,65,0.4),
-        0 0 60px rgba(0,255,65,0.2);
       line-height: 1.2;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
-    .sub-title {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 14px;
-      color: var(--matrix-dim);
-      letter-spacing: 2px;
+    h1 span {
+      background: linear-gradient(90deg, var(--green), #00e8b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .divider {
-      width: 200px;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--matrix-green), transparent);
-      margin: 20px auto;
-      box-shadow: 0 0 8px var(--matrix-green);
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 28px;
     }
 
-    /* ===== COURSES GRID ===== */
-    .section-label {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      color: var(--matrix-dim);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      text-align: center;
-    }
-
-    .courses-grid {
+    /* ===== COURSES PILLS ===== */
+    .courses {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 36px;
+      gap: 8px;
+      margin-bottom: 32px;
     }
 
-    .course-tag {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
-      color: var(--matrix-green);
+    .course-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card);
       border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 4px;
-      background: var(--input-bg);
-      cursor: default;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
       transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
     }
 
-    .course-tag::before {
-      content: '> ';
-      color: var(--matrix-dim);
+    .course-pill:hover {
+      border-color: var(--green);
+      color: var(--green);
     }
 
-    .course-tag:hover {
-      border-color: var(--matrix-green);
-      box-shadow: 0 0 12px rgba(0,255,65,0.3);
-      background: rgba(0,255,65,0.08);
-      transform: translateY(-2px);
+    .free-tag {
+      background: rgba(0,200,150,0.15);
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
     }
 
     /* ===== CARD ===== */
     .card {
-      background: var(--card-bg);
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 20px;
       padding: 36px;
-      backdrop-filter: blur(10px);
-      box-shadow:
-        0 0 40px rgba(0,255,65,0.05),
-        inset 0 1px 0 rgba(0,255,65,0.1);
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
     }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(to right, transparent, var(--matrix-green), transparent);
-      box-shadow: 0 0 10px var(--matrix-green);
-    }
-
-    .card-header {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
-      color: var(--matrix-dim);
-      letter-spacing: 2px;
-      margin-bottom: 28px;
+    .card-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--text);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .card-header::after {
+    .card-title::after {
       content: '';
       flex: 1;
       height: 1px;
@@ -200,13 +184,13 @@
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 16px;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
     .form-group.full {
@@ -214,413 +198,244 @@
     }
 
     label {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      color: var(--matrix-dim);
-      letter-spacing: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.5px;
       text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    label::before {
-      content: '//';
-      color: rgba(0,255,65,0.3);
     }
 
     input, select {
       background: var(--input-bg);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 12px 16px;
+      border-radius: 10px;
+      padding: 12px 14px;
       font-family: 'Cairo', sans-serif;
       font-size: 14px;
-      color: var(--matrix-green);
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
       outline: none;
       width: 100%;
-      transition: all 0.2s;
-      caret-color: var(--matrix-green);
     }
 
     input::placeholder {
-      color: rgba(0,179,44,0.3);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
+      color: #3d4f63;
+      font-size: 13px;
     }
 
     input:focus, select:focus {
-      border-color: var(--matrix-green);
-      box-shadow:
-        0 0 0 2px rgba(0,255,65,0.1),
-        0 0 20px rgba(0,255,65,0.1);
-      background: rgba(0,60,0,0.6);
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,200,150,0.1);
     }
 
     select option {
-      background: #001a00;
-      color: var(--matrix-green);
-    }
-
-    /* ===== COURSE CHECKBOXES ===== */
-    .courses-select {
-      grid-column: 1 / -1;
-    }
-
-    .courses-select label {
-      margin-bottom: 12px;
-    }
-
-    .checkbox-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 10px;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 10px 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .checkbox-item:hover {
-      border-color: var(--matrix-dim);
-      color: var(--matrix-green);
-    }
-
-    .checkbox-item input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      padding: 0;
-      accent-color: var(--matrix-green);
-      cursor: pointer;
-    }
-
-    .checkbox-item.checked {
-      border-color: var(--matrix-green);
-      color: var(--matrix-green);
-      background: rgba(0,255,65,0.06);
-      box-shadow: 0 0 10px rgba(0,255,65,0.1);
+      background: var(--card);
     }
 
     /* ===== SUBMIT ===== */
     .submit-btn {
       width: 100%;
-      margin-top: 28px;
-      padding: 16px;
-      background: transparent;
-      border: 1px solid var(--matrix-green);
-      color: var(--matrix-green);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 14px;
-      letter-spacing: 3px;
+      margin-top: 24px;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: #0d1117;
+      font-family: 'Cairo', sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      border: none;
+      border-radius: 12px;
       cursor: pointer;
-      border-radius: 4px;
-      text-transform: uppercase;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .submit-btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0,255,65,0.1), transparent);
-      transition: left 0.4s;
-    }
-
-    .submit-btn:hover::before {
-      left: 100%;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(0,200,150,0.3);
     }
 
     .submit-btn:hover {
-      background: rgba(0,255,65,0.08);
-      box-shadow:
-        0 0 20px rgba(0,255,65,0.3),
-        inset 0 0 20px rgba(0,255,65,0.05);
-      text-shadow: 0 0 10px var(--matrix-green);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,200,150,0.4);
     }
 
     .submit-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
 
     /* ===== SUCCESS ===== */
     .success-msg {
       display: none;
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 0;
     }
 
-    .success-icon {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 48px;
-      color: var(--matrix-green);
-      text-shadow: 0 0 20px var(--matrix-green);
-      margin-bottom: 20px;
-      animation: pulse-glow 1.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% { text-shadow: 0 0 20px var(--matrix-green); }
-      50% { text-shadow: 0 0 40px var(--matrix-green), 0 0 80px rgba(0,255,65,0.4); }
-    }
+    .success-msg .check { font-size: 52px; margin-bottom: 16px; }
 
     .success-msg h3 {
       font-family: 'Cairo', sans-serif;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
-      color: var(--matrix-green);
-      margin-bottom: 10px;
+      color: var(--green);
+      margin-bottom: 8px;
     }
 
     .success-msg p {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 13px;
       color: var(--muted);
-      letter-spacing: 1px;
+      font-size: 14px;
     }
 
-    /* ===== FOOTER ===== */
-    .footer {
+    .note {
+      margin-top: 20px;
       text-align: center;
-      margin-top: 30px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      color: rgba(0,179,44,0.4);
-      letter-spacing: 2px;
+      font-size: 12px;
+      color: var(--muted);
     }
 
-    /* ===== ANIMATIONS ===== */
-    .page { animation: fadeIn 0.8s ease both; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 520px) {
+    @media (max-width: 500px) {
       .form-grid { grid-template-columns: 1fr; }
       .form-group.full { grid-column: 1; }
-      .courses-select { grid-column: 1; }
-      .main-title { font-size: 28px; }
+      h1 { font-size: 28px; }
       .card { padding: 24px 16px; }
-      .checkbox-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
+<div class="wrapper">
 
-<!-- Matrix Rain -->
-<canvas id="matrixCanvas"></canvas>
-
-<div class="page">
-
-  <!-- HEADER -->
-  <div class="header">
-    <div class="glitch-title">// SYSTEM ONLINE — النظام يعمل //</div>
-    <h1 class="main-title">E-Learning Platform</h1>
-    <div class="sub-title">منصة التعلم الإلكتروني المجانية</div>
-    <div class="divider"></div>
+  <div class="badge">
+    <span class="badge-dot"></span>
+    FREE E-Learning — مجاناً تماماً
   </div>
 
-  <!-- AVAILABLE COURSES -->
-  <div class="section-label">// الكورسات المتاحة — Available Courses //</div>
-  <div class="courses-grid">
-    <div class="course-tag">English</div>
-    <div class="course-tag">Excel</div>
-    <div class="course-tag">Meta AI</div>
-    <div class="course-tag">Agent AI</div>
-    <div class="course-tag">Power BI</div>
-    <div class="course-tag">Python</div>
-    <div class="course-tag">Prompt For AI</div>
+  <h1>تعلّم <span>بلا حدود</span> 🚀</h1>
+  <p class="subtitle">سجّل الآن واحصل على وصول مجاني كامل لكورسات التقنية والذكاء الاصطناعي</p>
+
+  <!-- COURSES -->
+  <div class="courses">
+    <div class="course-pill">🇬🇧 English <span class="free-tag">FREE</span></div>
+    <div class="course-pill">📊 Excel <span class="free-tag">FREE</span></div>
+    <div class="course-pill">🤖 Meta AI <span class="free-tag">FREE</span></div>
+    <div class="course-pill">🧠 Agent AI <span class="free-tag">FREE</span></div>
+    <div class="course-pill">📈 Power BI <span class="free-tag">FREE</span></div>
+    <div class="course-pill">🐍 Python <span class="free-tag">FREE</span></div>
+    <div class="course-pill">✍️ Prompt For AI <span class="free-tag">FREE</span></div>
   </div>
 
-  <!-- REGISTRATION CARD -->
+  <!-- CARD -->
   <div class="card">
-    <div class="card-header">REGISTRATION_FORM.exe — نموذج التسجيل</div>
+    <div class="card-title">📋 Registration Form — نموذج التسجيل</div>
 
     <div id="formArea">
       <div class="form-grid">
 
+        <!-- الاسم -->
         <div class="form-group full">
           <label>الاسم الكامل — Full Name</label>
-          <input type="text" id="name" placeholder="أدخل اسمك الكامل..." />
+          <input type="text" id="name" placeholder="أدخل اسمك الكامل" />
         </div>
 
+        <!-- السن -->
         <div class="form-group">
           <label>السن — Age</label>
-          <input type="number" id="age" placeholder="__" min="10" max="80" />
+          <input type="number" id="age" placeholder="مثال: 22" min="10" max="80" />
         </div>
 
+        <!-- الرقم -->
         <div class="form-group">
           <label>الرقم — Phone</label>
           <input type="tel" id="phone" placeholder="01xxxxxxxxx" />
         </div>
 
+        <!-- محل الإقامة -->
         <div class="form-group full">
           <label>محل الإقامة — Address</label>
-          <input type="text" id="address" placeholder="المدينة، المحافظة..." />
+          <input type="text" id="address" placeholder="المدينة، المحافظة" />
         </div>
 
+        <!-- البريد الإلكتروني -->
         <div class="form-group full">
           <label>البريد الإلكتروني — Email</label>
           <input type="email" id="email" placeholder="example@email.com" />
         </div>
 
-        <!-- COURSES CHECKBOXES -->
-        <div class="form-group courses-select">
-          <label>الكورسات المطلوبة — Select Courses</label>
-          <div class="checkbox-grid">
-            <label class="checkbox-item" id="lbl-english">
-              <input type="checkbox" value="English" onchange="toggleCheck(this)"> English
-            </label>
-            <label class="checkbox-item" id="lbl-excel">
-              <input type="checkbox" value="Excel" onchange="toggleCheck(this)"> Excel
-            </label>
-            <label class="checkbox-item" id="lbl-metaai">
-              <input type="checkbox" value="Meta AI" onchange="toggleCheck(this)"> Meta AI
-            </label>
-            <label class="checkbox-item" id="lbl-agentai">
-              <input type="checkbox" value="Agent AI" onchange="toggleCheck(this)"> Agent AI
-            </label>
-            <label class="checkbox-item" id="lbl-powerbi">
-              <input type="checkbox" value="Power BI" onchange="toggleCheck(this)"> Power BI
-            </label>
-            <label class="checkbox-item" id="lbl-python">
-              <input type="checkbox" value="Python" onchange="toggleCheck(this)"> Python
-            </label>
-            <label class="checkbox-item" id="lbl-prompt">
-              <input type="checkbox" value="Prompt For AI" onchange="toggleCheck(this)"> Prompt For AI
-            </label>
-          </div>
+        <!-- الكورس -->
+        <div class="form-group full">
+          <label>الكورس المطلوب — Course</label>
+          <select id="course">
+            <option value="">— اختار الكورس — Select a course —</option>
+            <option value="English">🇬🇧 English</option>
+            <option value="Excel">📊 Excel</option>
+            <option value="Meta AI">🤖 Meta AI</option>
+            <option value="Agent AI">🧠 Agent AI</option>
+            <option value="Power BI">📈 Power BI</option>
+            <option value="Python">🐍 Python</option>
+            <option value="Prompt For AI">✍️ Prompt For AI</option>
+          </select>
         </div>
 
       </div>
 
       <button class="submit-btn" onclick="handleSubmit()">
-        [ EXECUTE — تسجيل الآن ]
+        Register Now — سجّل الآن 🚀
       </button>
     </div>
 
-    <!-- Success -->
+    <!-- SUCCESS -->
     <div class="success-msg" id="successMsg">
-      <div class="success-icon">[✓]</div>
+      <div class="check">✅</div>
       <h3>تم التسجيل بنجاح!</h3>
-      <p>ACCESS GRANTED — سيتم التواصل معك قريباً</p>
+      <p>سيتم التواصل معك قريباً — We will contact you soon</p>
     </div>
 
   </div>
 
-  <div class="footer">// جميع الكورسات مجانية — ALL COURSES ARE FREE //</div>
+  <p class="note">🔒 بياناتك محمية ولن تُشارك مع أي طرف ثالث</p>
 
 </div>
 
 <script>
-// ============================================================
-//  Google Apps Script URL
-// ============================================================
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_xPrwxKo7HAXI0VDYcW8X0laL6AuGT4PDXaJaK7gagzvn0bwlciFo9RIjQDoT4GpuBw/exec";
-// ============================================================
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_xPrwxKo7HAXI0VDYcW8X0laL6AuGT4PDXaJaK7gagzvn0bwlciFo9RIjQDoT4GpuBw/exec";
 
-// Matrix Rain Effect
-const canvas = document.getElementById('matrixCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+  async function handleSubmit() {
+    const name    = document.getElementById('name').value.trim();
+    const age     = document.getElementById('age').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const course  = document.getElementById('course').value;
 
-const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const fontSize = 14;
-const columns = Math.floor(canvas.width / fontSize);
-const drops = Array(columns).fill(1);
+    if (!name || !age || !phone || !address || !email || !course) {
+      alert('⚠️ يرجى تعبئة جميع الحقول\nPlease fill in all fields.');
+      return;
+    }
 
-function drawMatrix() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#00ff41';
-  ctx.font = fontSize + 'px Share Tech Mono';
-  drops.forEach((y, i) => {
-    const char = chars[Math.floor(Math.random() * chars.length)];
-    ctx.fillText(char, i * fontSize, y * fontSize);
-    if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-    drops[i]++;
-  });
-}
-setInterval(drawMatrix, 40);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('⚠️ يرجى إدخال بريد إلكتروني صحيح.');
+      return;
+    }
 
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'جاري الإرسال... ⏳';
+    btn.disabled = true;
 
-// Checkbox toggle
-function toggleCheck(checkbox) {
-  const label = checkbox.closest('.checkbox-item');
-  label.classList.toggle('checked', checkbox.checked);
-}
+    const formData = new FormData();
+    formData.append('name',    name);
+    formData.append('age',     age);
+    formData.append('phone',   phone);
+    formData.append('address', address);
+    formData.append('email',   email);
+    formData.append('course',  course);
+    formData.append('date',    new Date().toLocaleString('ar-EG'));
 
-// Submit
-async function handleSubmit() {
-  const name    = document.getElementById('name').value.trim();
-  const age     = document.getElementById('age').value.trim();
-  const phone   = document.getElementById('phone').value.trim();
-  const address = document.getElementById('address').value.trim();
-  const email   = document.getElementById('email').value.trim();
-
-  const selected = [...document.querySelectorAll('.checkbox-item input:checked')]
-    .map(cb => cb.value);
-
-  if (!name || !age || !phone || !address || !email) {
-    alert('⚠️ يرجى تعبئة جميع الحقول\nPlease fill in all fields.');
-    return;
+    try {
+      await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
+      document.getElementById('formArea').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    } catch (err) {
+      alert('❌ حدث خطأ. حاول مرة أخرى.');
+      btn.textContent = 'Register Now — سجّل الآن 🚀';
+      btn.disabled = false;
+    }
   }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    alert('⚠️ يرجى إدخال بريد إلكتروني صحيح.');
-    return;
-  }
-
-  if (selected.length === 0) {
-    alert('⚠️ يرجى اختيار كورس واحد على الأقل.');
-    return;
-  }
-
-  const btn = document.querySelector('.submit-btn');
-  btn.textContent = '[ PROCESSING... جاري الإرسال ]';
-  btn.disabled = true;
-
-  const formData = new FormData();
-  formData.append('name',    name);
-  formData.append('age',     age);
-  formData.append('phone',   phone);
-  formData.append('address', address);
-  formData.append('email',   email);
-  formData.append('course',  selected.join(' | '));
-  formData.append('date',    new Date().toLocaleString('ar-EG'));
-
-  try {
-    await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
-    document.getElementById('formArea').style.display = 'none';
-    document.getElementById('successMsg').style.display = 'block';
-  } catch (err) {
-    alert('❌ حدث خطأ. حاول مرة أخرى.');
-    btn.textContent = '[ EXECUTE — تسجيل الآن ]';
-    btn.disabled = false;
-  }
-}
 </script>
-
 </body>
 </html>
