@@ -1,60 +1,456 @@
-// ============================================================
-//  Google Apps Script — حفظ بيانات التسجيل في Google Sheets
-//  انسخ الكود ده كله في Apps Script وانشره
-// ============================================================
-
-function doPost(e) {
-  try {
-    // افتح الـ Spreadsheet الحالي
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-
-    // أضف عناوين الأعمدة إذا الشيت فاضي
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow([
-        "التاريخ",
-        "الاسم الكامل",
-        "السن",
-        "البريد الإلكتروني",
-        "الجامعة",
-        "العنوان",
-        "الكورس"
-      ]);
-
-      // تنسيق السطر الأول (Header)
-      const headerRange = sheet.getRange(1, 1, 1, 7);
-      headerRange.setBackground("#00c896");
-      headerRange.setFontColor("#ffffff");
-      headerRange.setFontWeight("bold");
-      headerRange.setHorizontalAlignment("center");
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free English & Excel Course — Register Now</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:   #00c896;
+      --green2:  #00a87e;
+      --dark:    #0d1117;
+      --card:    #161b22;
+      --border:  #2a3140;
+      --text:    #e6edf3;
+      --muted:   #7d8fa3;
+      --input-bg:#1c2333;
     }
 
-    // استخراج البيانات من الفورم
-    const name       = e.parameter.name       || "";
-    const age        = e.parameter.age        || "";
-    const email      = e.parameter.email      || "";
-    const university = e.parameter.university || "";
-    const address    = e.parameter.address    || "";
-    const course     = e.parameter.course     || "";
-    const date       = e.parameter.date       || new Date().toLocaleString();
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    // أضف صف جديد
-    sheet.appendRow([date, name, age, email, university, address, course]);
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-    // رد بنجاح
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
+    /* Animated background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,150,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,150,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
 
-  } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: "error", message: err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
+    /* Glow blob */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(0,200,150,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== BADGE ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,200,150,0.1);
+      border: 1px solid rgba(0,200,150,0.3);
+      color: var(--green);
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-dot {
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    /* ===== HEADING ===== */
+    h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, var(--green), #00e8b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* ===== COURSE PILLS ===== */
+    .courses {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .course-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .course-pill .icon {
+      font-size: 18px;
+    }
+
+    .course-pill .free-tag {
+      background: rgba(0,200,150,0.15);
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+
+    .card-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ===== FORM ===== */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    input, select {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+    }
+
+    input::placeholder {
+      color: #3d4f63;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,200,150,0.1);
+    }
+
+    select option {
+      background: var(--card);
+    }
+
+    /* ===== SUBMIT ===== */
+    .submit-btn {
+      width: 100%;
+      margin-top: 24px;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: #0d1117;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(0,200,150,0.3);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,200,150,0.4);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ===== SUCCESS ===== */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 20px 0 4px;
+    }
+
+    .success-msg .check {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .success-msg h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .success-msg p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ===== FOOTER NOTE ===== */
+    .note {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Animations */
+    .wrapper { animation: fadeUp 0.5s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .form-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      .card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <div class="badge">
+    <span class="badge-dot"></span>
+    FREE E-Learning Program — مجاناً تماماً
+  </div>
+
+  <h1>Learn <span>English</span> &amp; <span>Excel</span></h1>
+  <p class="subtitle">
+    سجّل الآن واحصل على وصول مجاني كامل لكورسات اللغة الإنجليزية و Excel من الصفر للاحتراف.
+  </p>
+
+  <div class="courses">
+    <div class="course-pill">
+      <span class="icon">🇬🇧</span>
+      English Language
+      <span class="free-tag">FREE</span>
+    </div>
+    <div class="course-pill">
+      <span class="icon">📊</span>
+      Microsoft Excel
+      <span class="free-tag">FREE</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Registration Form</div>
+
+    <div id="formArea">
+      <div class="form-grid">
+
+        <div class="form-group full">
+          <label>Full Name — الاسم الكامل</label>
+          <input type="text" id="name" placeholder="e.g. Ahmed Mohamed" />
+        </div>
+
+        <div class="form-group">
+          <label>Age — السن</label>
+          <input type="number" id="age" placeholder="e.g. 21" min="10" max="80" />
+        </div>
+
+        <div class="form-group">
+          <label>Email — البريد الإلكتروني</label>
+          <input type="email" id="email" placeholder="you@example.com" />
+        </div>
+
+        <div class="form-group full">
+          <label>University — الجامعة</label>
+          <input type="text" id="university" placeholder="e.g. Cairo University" />
+        </div>
+
+        <div class="form-group full">
+          <label>Address — العنوان</label>
+          <input type="text" id="address" placeholder="e.g. Cairo, Egypt" />
+        </div>
+
+        <div class="form-group full">
+          <label>Course — الكورس المطلوب</label>
+          <select id="course">
+            <option value="">— Select a course —</option>
+            <option value="english">🇬🇧 English Language</option>
+            <option value="excel">📊 Microsoft Excel</option>
+            <option value="both">🎓 Both Courses</option>
+          </select>
+        </div>
+
+      </div>
+
+      <button class="submit-btn" onclick="handleSubmit()">
+        Register Now — سجّل الآن 🚀
+      </button>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-msg" id="successMsg">
+      <div class="check">✅</div>
+      <h3>Registration Successful!</h3>
+      <p>تم تسجيلك بنجاح! سيتم التواصل معك قريباً على بريدك الإلكتروني.</p>
+    </div>
+
+  </div>
+
+  <p class="note">🔒 بياناتك محمية ولن تُشارك مع أي طرف ثالث</p>
+
+</div>
+
+<script>
+  // ============================================================
+  //  ضع رابط Google Apps Script هنا بعد نشره
+  // ============================================================
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_xPrwxKo7HAXI0VDYcW8X0laL6AuGT4PDXaJaK7gagzvn0bwlciFo9RIjQDoT4GpuBw/exec";
+  // ============================================================
+
+  async function handleSubmit() {
+    const name       = document.getElementById('name').value.trim();
+    const age        = document.getElementById('age').value.trim();
+    const email      = document.getElementById('email').value.trim();
+    const university = document.getElementById('university').value.trim();
+    const address    = document.getElementById('address').value.trim();
+    const course     = document.getElementById('course').value;
+
+    if (!name || !age || !email || !university || !address || !course) {
+      alert('يرجى تعبئة جميع الحقول — Please fill in all fields.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('يرجى إدخال بريد إلكتروني صحيح.');
+      return;
+    }
+
+    // تغيير زر الإرسال أثناء الإرسال
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'جاري الإرسال... ⏳';
+    btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('name',       name);
+    formData.append('age',        age);
+    formData.append('email',      email);
+    formData.append('university', university);
+    formData.append('address',    address);
+    formData.append('course',     course);
+    formData.append('date',       new Date().toLocaleString('ar-EG'));
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+      });
+
+      // نجح الإرسال
+      document.getElementById('formArea').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+
+    } catch (err) {
+      alert('حدث خطأ أثناء الإرسال. حاول مرة أخرى.');
+      btn.textContent = 'Register Now — سجّل الآن 🚀';
+      btn.disabled = false;
+    }
   }
-}
+</script>
 
-// دالة اختبار (اختياري)
-function doGet(e) {
-  return ContentService
-    .createTextOutput("✅ Apps Script يعمل بشكل صحيح!")
-    .setMimeType(ContentService.MimeType.TEXT);
-}
+</body>
+</html>
